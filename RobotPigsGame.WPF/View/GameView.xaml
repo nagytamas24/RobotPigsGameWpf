@@ -1,0 +1,112 @@
+﻿<Window x:Class="RobotPigsGame.WPF.GameView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RobotPigsGame.WPF"
+        xmlns:enum="clr-namespace:RobotPigsGame.Model;assembly=RobotPigsGame"
+        mc:Ignorable="d"
+        Title="Harcos robot malacok játék" Height="700" Width="780"
+        MinHeight="700" MinWidth="780" ResizeMode="CanResize" WindowStartupLocation="CenterScreen" Style="{StaticResource DefaultWindowStyle}" >
+
+    <Grid x:Name="windowGrid">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <Menu FontSize="14" Grid.Row="0" Grid.ColumnSpan="2">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Új játék" Command="{Binding NewGameCommand}" />
+                <Separator />
+                <MenuItem x:Name="_saveGame" Header="_Mentés" />
+                <MenuItem x:Name="_loadGame" Header="_Betöltés" />
+                <Separator />
+                <MenuItem x:Name="_exit" Header="_Kilépés" />
+            </MenuItem>
+            <MenuItem Header="_Pályaméret" >
+                <MenuItem Header="_Kicsi" Command="{Binding SetMapSizeCommand}" CommandParameter="{x:Static enum:MapSize.Small}" />
+                <MenuItem Header="_Közepes" Command="{Binding SetMapSizeCommand}" CommandParameter="{x:Static enum:MapSize.Medium}"/>
+                <MenuItem Header="_Nagy" Command="{Binding SetMapSizeCommand}" CommandParameter="{x:Static enum:MapSize.Large}" />
+            </MenuItem>
+        </Menu>
+
+        <!--
+        <WrapPanel x:Name="_map" Background="Gray" VerticalAlignment="Center" Orientation="Horizontal" Margin="20,20,20,20" Grid.Column="0" Grid.Row="1" MinHeight="450" MinWidth="450"  />
+        -->
+
+        <ItemsControl ItemsSource="{Binding Fields}" Grid.Column="0" Grid.Row="1" Margin="20">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="{Binding MapSizeValue, RelativeSource={RelativeSource AncestorType=Window}}" Rows="{Binding MapSizeValue, RelativeSource={RelativeSource AncestorType=Window}}" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Label Content="{Binding Text}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" BorderThickness="1" BorderBrush="Black">
+                        <Label.RenderTransform>
+                            <ScaleTransform ScaleX="1" ScaleY="1" />
+                        </Label.RenderTransform>
+                    </Label>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemContainerStyle>
+                <Style>
+                    <Setter Property="Grid.Row" Value="{Binding X}" />
+                    <Setter Property="Grid.Column" Value="{Binding Y}" />
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+        </ItemsControl>
+        
+        <Grid x:Name="_playerPanel" Grid.Row="1" Grid.Column="2" Margin="20,20,20,20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Grid.Row="0">
+                <TextBlock Text="Játékos 1" FontSize="32" TextAlignment="Center" FontWeight="Bold" />
+                <DockPanel>
+                    <Label Content="Életpontok:" FontSize="20" DockPanel.Dock="Left" />
+                    <TextBlock Text="{Binding P1Health}" FontSize="20" DockPanel.Dock="Right" TextAlignment="Center" VerticalAlignment="Center" />
+                </DockPanel>
+                <Button Padding="30, 10, 30, 10" Command="{Binding SetPlayerCommandsCommand}" CommandParameter="1">
+                    <TextBlock Text="Utasítások&#x0a;szerkesztése" FontSize="16" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Button>
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Grid.Row="2">
+                <TextBlock Text="Játékos 2" FontSize="32" TextAlignment="Center" FontWeight="Bold" />
+                <DockPanel>
+                    <Label Content="Életpontok:" DockPanel.Dock="Left" FontSize="20" />
+                    <TextBlock Text="{Binding P2Health}" FontSize="20" DockPanel.Dock="Right" TextAlignment="Center" VerticalAlignment="Center" />
+                </DockPanel>
+                <Button Padding="30, 10, 30, 10" Command="{Binding SetPlayerCommandsCommand}" CommandParameter="2">
+                    <TextBlock Text="Utasítások&#x0a;szerkesztése" FontSize="16" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <Button 
+            Margin="0,10,0,20" 
+            Padding="10" 
+            Grid.Row="2" 
+            Grid.Column="0" 
+            Grid.ColumnSpan="2" 
+            HorizontalAlignment="Center" 
+            VerticalAlignment="Center" 
+            IsDefault="True"
+            Command="{Binding PlayTurnCommand}"
+            IsEnabled="{Binding CanPlayTurn}"
+            >
+            <TextBlock Text="Kör lejátszása" FontSize="32" />
+        </Button>
+    </Grid>
+</Window>
